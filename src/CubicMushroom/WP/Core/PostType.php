@@ -4,7 +4,7 @@
  *
  * PHP version 5
  * 
- * @category   WordPress_Plugins
+ * @category   WordPress
  * @package    CubicMushroom_WP
  * @subpackage Core
  * @author     Toby Griffiths <toby@cubicmushroom.co.uk>
@@ -14,13 +14,13 @@
 
 namespace CubicMushroom\WP\Core;
 
-use CubicMushroom\WP\Exception\PostTypeRegistrationFailedException;
-use CubicMushroom\WP\Plugins\Plugin;
+use \CubicMushroom\WP\Exception\PostTypeRegistrationFailedException;
+use \CubicMushroom\WP\Core\Base;
 
 /**
  * NCF Fund & Application WordPress plugin core class
  * 
- * @category   WordPress_Plugins
+ * @category   WordPress
  * @package    CubicMushroom_WP
  * @subpackage Core
  * @author     Toby Griffiths <toby@cubicmushroom.co.uk>
@@ -79,17 +79,17 @@ abstract class PostType
     protected $labels;
 
     /**
-     * registers the custom post type
+     * Registers the custom post type
      *
-     * @param Plugin $plugin Plugin object that is responsible for this custo post
-     *                       type
+     * @param \CubicMushroom\WP\Core\Base $plugin Plugin object that is responsible
+     *                                            for this custo post type
      *
      * @throws PostTypeRegistrationFailedException If error returned when attempting
      *                                             to register post type
      * 
      * @return PostType
      */
-    static public function register(Plugin $plugin)
+    static public function register(Base $plugin)
     {
         $class = get_called_class();
         $args = wp_parse_args($class::$postArgs, self::$postArgs);
