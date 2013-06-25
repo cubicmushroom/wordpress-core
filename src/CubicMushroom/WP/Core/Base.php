@@ -310,7 +310,8 @@ class Base
                 } else {
                     $this->addAdminNotice(
                         sprintf(
-                            "Unable to load '%s' custom port type class",
+                            "Unable to load '%s' custom post type class. Please " .
+                            "create the $postTypeClass class",
                             $postType
                         ),
                         "load_post_type_failed:$postType"
