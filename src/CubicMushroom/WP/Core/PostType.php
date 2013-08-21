@@ -4,7 +4,7 @@
  *
  * PHP version 5
  * 
- * @category   WordPress_Plugins
+ * @category   WordPress
  * @package    CubicMushroom_WP
  * @subpackage Core
  * @author     Toby Griffiths <toby@cubicmushroom.co.uk>
@@ -17,10 +17,9 @@ namespace CubicMushroom\WP\Core;
 use CubicMushroom\WP\Core\Exception\BadCallbackException;
 use CubicMushroom\WP\Core\Exception\PostNotFoundException;
 use CubicMushroom\WP\Core\Exception\PostTypeRegistrationFailedException;
-use CubicMushroom\WP\Plugins\Plugin;
+use CubicMushroom\WP\Core\Base;
 
 if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
-
     /**
      * NCF Fund & Application WordPress plugin core class
      * 
@@ -85,15 +84,17 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
         /**
          * Registers the custom post type
          *
-         * @param Plugin $plugin Plugin object that is responsible for this custom post
-         *                       type
+         * @param \CubicMushroom\WP\Core\Base $owner Plugin object that is
+         *                                            responsible for this custom
+         *                                            post type
          *
-         * @throws PostTypeRegistrationFailedException If error returned when attempting
-         *                                             to register post type
+         * @throws PostTypeRegistrationFailedException If error returned when
+         *                                             attempting to register post
+         *                                             type
          * 
          * @return PostType
          */
-        static public function register(Plugin $plugin)
+        static public function register(Base $owner)
         {
             $class = get_called_class();
             $args = wp_parse_args($class::$postArgs, self::$postArgs);
@@ -108,6 +109,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
 
             return $postType;
         }
+
 
 
         /**
@@ -304,5 +306,6 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
         {
             return $this->WP_Post->post_title;
         }
+
     } // END class PostType
-}
+} // END if (!class_exists('\CubicMushroom\WP\Core\PostType'))

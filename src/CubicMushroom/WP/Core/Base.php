@@ -138,7 +138,7 @@ class Base
      * @throws \LogicException   If the descendant class does not call back to the
      *                           Base::__construct() method
      * 
-     * @return FundApplicationPlugin
+     * @return Base
      */
     static function load($file = null)
     {
@@ -172,10 +172,10 @@ class Base
     /**
      * Protected constructor used to prevent multiple plugin objects being created.
      *
-     * @param string $file Plugin's initial file
-     *
-     * Use the FundApplicationPlugin::load() method to get the universal plugin
+     * Use the Base::load() method to get the universal plugin
      * object
+     *
+     * @param string $file Theme or Plugin initial file
      */
     protected function __construct($file)
     {
@@ -186,7 +186,7 @@ class Base
         session_start();
 
         // Save the plugin file path
-        $this->pluginFile = $file;
+        $this->coreFile = $file;
 
         // Store the actual class name
         $this->class = get_class($this);
@@ -231,7 +231,7 @@ class Base
 
             call_user_func(
                 $registerFunction,
-                $this->pluginFile,
+                $this->coreFile,
                 $rolesCapabilitiesCallback
             );
 
@@ -252,7 +252,7 @@ class Base
                 // Register the hook callback
                 call_user_func(
                     $registerFunction,
-                    $this->pluginFile,
+                    $this->coreFile,
                     $callback
                 );
             }
@@ -330,7 +330,8 @@ class Base
                 } else {
                     $this->addAdminNotice(
                         sprintf(
-                            "Unable to load '%s' custom port type class",
+                            "Unable to load '%s' custom post type class. Please " .
+                            "create the $postTypeClass class",
                             $postType
                         ),
                         "load_post_type_failed:$postType"
