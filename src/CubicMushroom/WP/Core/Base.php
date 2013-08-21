@@ -53,7 +53,7 @@ class Base
      * 
      * @var string
      */
-    protected $pluginFile;
+    protected $coreFile;
 
     /**
      * Stores the object's actual class name
@@ -352,7 +352,7 @@ class Base
     public function hookActivationRolesAndCapabilities()
     {
 // This line is here to attempt to debug the 'read' capability removal problem
-$logFile = dirname($this->pluginFile) . '/cap_error_log';
+$logFile = dirname($this->coreFile) . '/cap_error_log';
 error_log(date('Y-m-d H:i:s') . " - Calling Base::hookActivationRolesAndCapabilities()\n", 3, $logFile);
         // Add custom roles
         if (!empty($this->customRoles)) {
