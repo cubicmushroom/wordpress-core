@@ -53,7 +53,7 @@ class Base
      * 
      * @var string
      */
-    protected $coreFile;
+    protected $pluginFile;
 
     /**
      * Stores the object's actual class name
@@ -115,6 +115,12 @@ class Base
      * @var array
      */
     protected $customCapabilities = array();
+
+    /**
+     * Array of class names used to build metabox objects used within the plugin
+     * @var array
+     */
+    protected $metaboxes = array();
 
 
 
@@ -191,6 +197,8 @@ class Base
         // Check for main hood callbacks
         $this->setupAutomaticActionHooks();
 
+        $this->registerMetaboxes();
+
         // Add plugin core hooks
         add_action('init', array($this, 'registerCustomPostTypes'), 9);
         add_action('admin_notices', array($this, 'displayAdminNotices'), 9);
@@ -220,6 +228,7 @@ class Base
                 $this,
                 sprintf('hook%sRolesAndCapabilities', ucfirst($pluginAction))
             );
+
             call_user_func(
                 $registerFunction,
                 $this->coreFile,
@@ -272,6 +281,17 @@ class Base
         }
     }
 
+    /**
+     * Instantiates metabox objects based on the classes metaboxes array property 
+     *
+     * @return void
+     */
+    protected function registerMetaboxes()
+    {
+        foreach ($this->metaboxes as $metabox) {
+            
+        }
+    }
 
     /****************
      * Action hooks *
@@ -331,6 +351,9 @@ class Base
      */
     public function hookActivationRolesAndCapabilities()
     {
+// This line is here to attempt to debug the 'read' capability removal problem
+$logFile = dirname($this->pluginFile) . '/cap_error_log';
+error_log(date('Y-m-d H:i:s') . " - Calling Base::hookActivationRolesAndCapabilities()\n", 3, $logFile);
         // Add custom roles
         if (!empty($this->customRoles)) {
             foreach ($this->customRoles as $key => $value) {
@@ -344,19 +367,21 @@ class Base
                 foreach ($grants as $grant_type => $roles) {
                     switch($grant_type) {
                         case 'allow':
+vd('Allowing');
                             foreach ($roles as $role) {
                                 $role = get_role($role);
                                 $role->add_cap($capability, true);
                             }
                             continue 2;
                         case 'deny':
+vd("Denying");
                             foreach ($roles as $role) {
                                 $role = get_role($role);
                                 $role->add_cap($capability, false);
                             }
                             continue 2;
                         default:
-                            throw new \InvalidArgumentException("Error Processing Request", 1);
+                            throw new \InvalidArgumentException("Invalid grant type");
                             
                     }
                 }
