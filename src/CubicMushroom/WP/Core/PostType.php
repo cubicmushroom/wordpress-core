@@ -12,12 +12,12 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-namespace CubicMushroom\WP\Core;
+namespace CubicMushroom\WP\Core
 
-use CubicMushroom\WP\Core\Exception\BadCallbackException;
-use CubicMushroom\WP\Core\Exception\PostNotFoundException;
-use CubicMushroom\WP\Core\Exception\PostTypeRegistrationFailedException;
-use CubicMushroom\WP\Core\Base;
+use ;
+use ;
+use ;
+use ;
 
 if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
     /**
@@ -30,7 +30,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
      * @license    http://opensource.org/licenses/MIT MIT
      * @link       http://cubicmushroom.co.uk
      **/
-    abstract class PostType
+    abstract class CubicMushroom_WP_Core_PostType
     {
         /**
          * Stores the instance of the plugin class to prevent duplicate objects being
@@ -84,23 +84,23 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
         /**
          * Registers the custom post type
          *
-         * @param \CubicMushroom\WP\Core\Base $owner Plugin object that is
+         * @param CubicMushroom_WP_Core_Base $owner Plugin object that is
          *                                            responsible for this custom
          *                                            post type
          *
-         * @throws PostTypeRegistrationFailedException If error returned when
+         * @throws CubicMushroom_WP_Core_Exception_PostTypeRegistrationFailedException If error returned when
          *                                             attempting to register post
          *                                             type
          * 
          * @return PostType
          */
-        static public function register(Base $owner)
+        static public function register(CubicMushroom_WP_Core_Base $owner)
         {
             $class = get_called_class();
             $args = wp_parse_args($class::$postArgs, self::$postArgs);
             $postType = register_post_type($class::POST_SLUG, $args);
             if ($postType instanceof \WP_Error) {
-                throw new PostTypeRegistrationFailedException($class, $args, $postType);
+                throw new CubicMushroom_WP_Core_Exception_PostTypeRegistrationFailedException($class, $args, $postType);
             }
 
             if (!empty($class::$metaboxes)) {
@@ -120,7 +120,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
          * Creates a PostType object based on a 
          *
          * @throws InvalidArgumentException If no $postID provided
-         * @throws PostNotFoundException    If unable to find the fund requested
+         * @throws CubicMushroom_WP_Core_Exception_PostNotFoundException    If unable to find the fund requested
          * 
          * @return PostType
          */
@@ -134,7 +134,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
             $post = get_post($postID);
 
             if (empty($post) || $class::POST_SLUG !== $post->post_type) {
-                throw new PostNotFoundException(
+                throw new CubicMushroom_WP_Core_Exception_PostNotFoundException(
                     "Unable to find post with the ID #$postID"
                 );
             }
@@ -206,7 +206,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
                     );
                     $metaboxCallback = array($class, $metaboxCallbackMethod);
                     if (!is_callable($metaboxCallback)) {
-                        throw new BadCallbackException(
+                        throw new CubicMushroom_WP_Core_Exception_BadCallbackException(
                             "Callback $class::$metaboxCallbackMethod() not found"
                         );
                     }

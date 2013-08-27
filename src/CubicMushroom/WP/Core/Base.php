@@ -1,7 +1,7 @@
 <?php
 /**
  * Base WordPress class for core functionality.  Is extended by the
- * CubicMushroom\WP'Plugins\Plugin and CubicMushroom\WP\Themes\Theme classes
+ * CubicMushroom_WP_Plugins_Plugin and CubicMushroom_WP_Themes_Theme classes
  *
  * PHP version 5
  * 
@@ -13,11 +13,9 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-namespace CubicMushroom\WP\Core;
-
 /**
  * Base WordPress class for core functionality.  Is extended by the
- * CubicMushroom\WP'Plugins\Plugin and CubicMushroom\WP\Themes\Theme classes
+ * CubicMushroom_WP_Plugins_Plugin and CubicMushroom_WP_Themes_Theme classes
  * 
  * @category   WordPress_Plugins
  * @package    CubicMushroom_WP
@@ -26,7 +24,7 @@ namespace CubicMushroom\WP\Core;
  * @license    http://opensource.org/licenses/MIT MIT
  * @link       http://cubicmushroom.co.uk
  **/
-class Base
+class CubicMushroom_WP_Core_Base
 {
 
     /*********************
@@ -64,8 +62,8 @@ class Base
     /**
      * Flag to warn of incorrect descendant class setup
      * 
-     * This flag set to true within Base::__construct(), & then checked within
-     * Base::load() to verify that the descendant class has called the anscestor's
+     * This flag set to true within CubicMushroom_WP_Core_Base::__construct(), & then checked within
+     * CubicMushroom_WP_Core_Base::load() to verify that the descendant class has called the anscestor's
      * __constrt() methods
      *
      * @var bool
@@ -83,7 +81,7 @@ class Base
     );
 
     /**
-     * Array of class names of classes extending the CubicMushroom\WP\Core\PostType
+     * Array of class names of classes extending the CubicMushroom_WP_Core_PostType
      * class, defining custom post types to be registered
      * @var array
      */
@@ -93,7 +91,7 @@ class Base
      * Array of custom user roles with the key as the role slug & the value as the
      * Role label
      *
-     * This is user in the Base::hookActivationRolesAndCapabilities() method to
+     * This is user in the CubicMushroom_WP_Core_Base::hookActivationRolesAndCapabilities() method to
      * automatically add these on theme/plugin activation, & remove them again on
      * deactivation
      * 
@@ -108,7 +106,7 @@ class Base
      *   * 'allow' => array of roles grant this capability to
      *   * 'deny'  => array of roles to not grant this capability to
      *
-     * This is user in the Base::hookActivationRolesAndCapabilities() method to
+     * This is user in the CubicMushroom_WP_Core_Base::hookActivationRolesAndCapabilities() method to
      * automatically add these on theme/plugin activation, & remove them again on
      * deactivation
      * 
@@ -133,19 +131,19 @@ class Base
      *
      * @param string $file The plugin's initial file
      *
-     * @throws \RuntimeException If $file is not provided when calling load() for the
+     * @throws RuntimeException If $file is not provided when calling load() for the
      *                           first time
-     * @throws \LogicException   If the descendant class does not call back to the
-     *                           Base::__construct() method
+     * @throws LogicException   If the descendant class does not call back to the
+     *                           CubicMushroom_WP_Core_Base::__construct() method
      * 
-     * @return Base
+     * @return CubicMushroom_WP_Core_Base
      */
     static function load($file = null)
     {
         if (empty(self::$self)) {
             $class = get_called_class();
             if (is_null($file)) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf(
                         'You must pass in the main theme/plugin file path when ' .
                         'calling %s::load() for the plugin for the first time',
@@ -155,9 +153,9 @@ class Base
             }
             self::$self = new $class($file);
             if (!self::$self->setupCorrectly) {
-                throw new \LogicException(
+                throw new LogicException(
                     'Class not setup correctly, as it does not call anscestor '.
-                    '__construct() methods back to Base class'
+                    '__construct() methods back to CubicMushroom_WP_Core_Base class'
                 );
             }
         }
@@ -172,7 +170,7 @@ class Base
     /**
      * Protected constructor used to prevent multiple plugin objects being created.
      *
-     * Use the Base::load() method to get the universal plugin
+     * Use the CubicMushroom_WP_Core_Base::load() method to get the universal plugin
      * object
      *
      * @param string $file Theme or Plugin initial file
@@ -210,7 +208,7 @@ class Base
      * 
      *  (Uninstall is not working at the moment.  Needs fixing)
      *
-     * @throws \Exception If there is an uninstall hook defined, as this needs fixing
+     * @throws Exception If there is an uninstall hook defined, as this needs fixing
      *
      * @return  void
      */
@@ -243,7 +241,7 @@ class Base
                 // For some reason the uninstall hook is not working, so throwing an 
                 // exception if attempting to use this for now
                 if ('uninstall' === $pluginAction) {
-                    throw new \Exception(
+                    throw new Exception(
                         'Attempting to use the uninstall hook, but this is not ' .
                         'working yet.  Please fix it!'
                     );
@@ -303,7 +301,7 @@ class Base
      * This is called on the 'init' hook
      *
      * @uses __CLASS__::$customPostTypes This is an array of
-     *       CubicMushroom\WP\Core\PostType class names to be registered
+     *       CubicMushroom_WP_Core_PostType class names to be registered
      *
      * @return void
      */
@@ -311,13 +309,13 @@ class Base
     {
         if (!empty($this->customPostTypes)) {
             // Work out the namespace for the PostType classes
-            $namespace = explode('\\', get_class($this));
+            $namespace = explode('_', get_class($this));
             unset($namespace[count($namespace)-1]);
             $namespace[] = 'PostType';
 
             // Register the post types
             foreach ($this->customPostTypes as $postType) {
-                $postTypeClass = implode('\\', $namespace) . "\\$postType";
+                $postTypeClass = implode('_', $namespace) . "_{$postType}";
                 if (class_exists($postTypeClass)) {
                     try {
                         $postTypeClass::register($this);
@@ -344,7 +342,7 @@ class Base
     /**
      * Sets up custom roles as defined in $this->customRoles property
      *
-     * @throws \InvalidArgumentException If there is a grant type key that's not
+     * @throws InvalidArgumentException If there is a grant type key that's not
      *                                   'allow' or 'deny'
      * 
      * @return void
@@ -353,7 +351,7 @@ class Base
     {
 // This line is here to attempt to debug the 'read' capability removal problem
 $logFile = dirname($this->coreFile) . '/cap_error_log';
-error_log(date('Y-m-d H:i:s') . " - Calling Base::hookActivationRolesAndCapabilities()\n", 3, $logFile);
+error_log(date('Y-m-d H:i:s') . " - Calling CubicMushroom_WP_Core_Base::hookActivationRolesAndCapabilities()\n", 3, $logFile);
         // Add custom roles
         if (!empty($this->customRoles)) {
             foreach ($this->customRoles as $key => $value) {
@@ -381,7 +379,7 @@ vd("Denying");
                             }
                             continue 2;
                         default:
-                            throw new \InvalidArgumentException("Invalid grant type");
+                            throw new InvalidArgumentException("Invalid grant type");
                             
                     }
                 }
@@ -392,7 +390,7 @@ vd("Denying");
     /**
      * Removes custom roles as defined in $this->customRoles property
      *
-     * @throws \InvalidArgumentException If there is a grant type key that's not
+     * @throws InvalidArgumentException If there is a grant type key that's not
      *                                   'allow' or 'deny'
      * 
      * @return void
@@ -459,4 +457,4 @@ vd("Denying");
         $_SESSION['CM_WP'][$this->class]['admin_notices'][$key] = $msg;
     }
 
-} // END class Base
+} // END class CubicMushroom_WP_Core_Base
