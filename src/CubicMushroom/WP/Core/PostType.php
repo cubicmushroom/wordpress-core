@@ -12,7 +12,7 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
+if (!class_exists('CubicMushroom_WP_Core_PostType')) {
     /**
      * NCF Fund & Application WordPress plugin core class
      * 
