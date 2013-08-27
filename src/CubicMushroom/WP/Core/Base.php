@@ -308,17 +308,12 @@ class CubicMushroom_WP_Core_Base
     public function registerCustomPostTypes()
     {
         if (!empty($this->customPostTypes)) {
-            // Work out the namespace for the PostType classes
-            $namespace = explode('_', get_class($this));
-            unset($namespace[count($namespace)-1]);
-            $namespace[] = 'PostType';
 
             // Register the post types
             foreach ($this->customPostTypes as $postType) {
-                $postTypeClass = implode('_', $namespace) . "_{$postType}";
-                if (class_exists($postTypeClass)) {
+                if (class_exists($postType)) {
                     try {
-                        $postTypeClass::register($this);
+                        $postType::register($this);
                     } catch (PostTypeRegistrationFailedException $e) {
                         $this->addAdminNotice(
                             $e->getMessage(),
@@ -329,7 +324,7 @@ class CubicMushroom_WP_Core_Base
                     $this->addAdminNotice(
                         sprintf(
                             "Unable to load '%s' custom post type class. Please " .
-                            "create the $postTypeClass class",
+                            "create the $postType class",
                             $postType
                         ),
                         "load_post_type_failed:$postType"
