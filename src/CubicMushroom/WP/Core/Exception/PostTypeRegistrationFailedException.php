@@ -12,8 +12,6 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-use CubicMushroom_WP_Core_PostType;
-
 /**
  * Exception thrown when custom post type registration fails
  *

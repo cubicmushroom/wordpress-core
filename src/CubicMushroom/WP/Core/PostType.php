@@ -12,13 +12,6 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-namespace CubicMushroom\WP\Core
-
-use ;
-use ;
-use ;
-use ;
-
 if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
     /**
      * NCF Fund & Application WordPress plugin core class
