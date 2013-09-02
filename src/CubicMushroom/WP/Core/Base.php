@@ -105,8 +105,10 @@ class Base
      * Array of custom user capabilities with the key as the role slug & the value as
      * an associated array containing the following keys...
      *
-     *   * 'allow' => array of roles grant this capability to
-     *   * 'deny'  => array of roles to not grant this capability to
+     *   * 'allow'           => array of roles grant this capability to
+     *   * 'deny'            => array of roles to not grant this capability to
+     *   * 'core_capability' => set to true if is a WP core capability, so it's not
+     *                          removed when plugin is deactivated
      *
      * This is user in the Base::hookActivationRolesAndCapabilities() method to
      * automatically add these on theme/plugin activation, & remove them again on
@@ -351,9 +353,6 @@ class Base
      */
     public function hookActivationRolesAndCapabilities()
     {
-// This line is here to attempt to debug the 'read' capability removal problem
-$logFile = dirname($this->coreFile) . '/cap_error_log';
-error_log(date('Y-m-d H:i:s') . " - Calling Base::hookActivationRolesAndCapabilities()\n", 3, $logFile);
         // Add custom roles
         if (!empty($this->customRoles)) {
             foreach ($this->customRoles as $key => $value) {
@@ -367,19 +366,22 @@ error_log(date('Y-m-d H:i:s') . " - Calling Base::hookActivationRolesAndCapabili
                 foreach ($grants as $grant_type => $roles) {
                     switch($grant_type) {
                         case 'allow':
-vd('Allowing');
                             foreach ($roles as $role) {
                                 $role = get_role($role);
                                 $role->add_cap($capability, true);
                             }
-                            continue 2;
+                            break;
                         case 'deny':
-vd("Denying");
                             foreach ($roles as $role) {
                                 $role = get_role($role);
                                 $role->add_cap($capability, false);
                             }
-                            continue 2;
+                            break;
+                        case 'core_capability':
+                            // Ignore this, as it's used to indicate whether the
+                            // capability is a WP core capability, & therefore should
+                            // not be removed on deactivation
+                            break;
                         default:
                             throw new \InvalidArgumentException("Invalid grant type");
                             
@@ -403,6 +405,12 @@ vd("Denying");
         // Remove custom capabilities
         if (!empty($this->customCapabilities)) {
             foreach ($this->customCapabilities as $capability => $grants) {
+                // If this is a WP core capability (core_capability = true) don't
+                // remove
+                if (!empty($grants['core_capability'])) {
+                    continue;
+                }
+
                 foreach ($wp_roles->roles as $role => $details) {
                     $wp_roles->remove_cap($role, $capability);
                 }
