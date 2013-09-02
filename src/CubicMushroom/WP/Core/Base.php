@@ -197,7 +197,7 @@ class Base
         $this->registerActivationDeactivationUninstallHooks();
 
         // Flush the rewrite rules on activation
-        register_activation_hook($this->coreFile, array($this, 'flushRewriteRules'));
+        register_activation_hook($this->coreFile, array(__CLASS__, 'flushRewriteRules'));
 
         // Check for main hood callbacks
         $this->setupAutomaticActionHooks();
@@ -230,7 +230,7 @@ class Base
             // Firstly setup the base callbacks to automatically add/remove custom
             // roles & capabilities
             $rolesCapabilitiesCallback = array(
-                $this,
+                __CLASS__,
                 sprintf('hook%sRolesAndCapabilities', ucfirst($pluginAction))
             );
 
@@ -242,7 +242,7 @@ class Base
 
 
             // Now check the plugin/theme class for callback
-            $callback = array($this, 'hook' . ucfirst($pluginAction));
+            $callback = array(get_class($this), 'hook' . ucfirst($pluginAction));
             if (is_callable($callback)) {
 
                 // For some reason the uninstall hook is not working, so throwing an 
@@ -273,6 +273,16 @@ class Base
      */
     static public function flushRewriteRules()
     {
+        $class = get_called_class();
+        $plugin = $class::load();
+
+        // Call register post types to setup permalinks before flushing them
+        $plugin->registerCustomPostTypes();
+
+        // Call any additional pre-flush permalink setups
+        do_action('cm_pre_flush');
+
+        // Now flush the permalinks
         flush_rewrite_rules();
     }
 
@@ -366,18 +376,21 @@ class Base
      * 
      * @return void
      */
-    public function hookActivationRolesAndCapabilities()
+    static public function hookActivationRolesAndCapabilities()
     {
+        $class = get_called_class();
+        $plugin = $class::load();
+
         // Add custom roles
-        if (!empty($this->customRoles)) {
-            foreach ($this->customRoles as $key => $value) {
+        if (!empty($plugin->customRoles)) {
+            foreach ($plugin->customRoles as $key => $value) {
                 add_role($key, $value);
             }
         }
 
         // Add custom capabilities
-        if (!empty($this->customCapabilities)) {
-            foreach ($this->customCapabilities as $capability => $grants) {
+        if (!empty($plugin->customCapabilities)) {
+            foreach ($plugin->customCapabilities as $capability => $grants) {
                 foreach ($grants as $grant_type => $roles) {
                     switch($grant_type) {
                         case 'allow':
@@ -414,12 +427,16 @@ class Base
      * 
      * @return void
      */
-    public function hookDeactivationRolesAndCapabilities()
+    static public function hookDeactivationRolesAndCapabilities()
     {
         global $wp_roles;
+
+        $class = get_called_class();
+        $plugin = $class::load();
+
         // Remove custom capabilities
-        if (!empty($this->customCapabilities)) {
-            foreach ($this->customCapabilities as $capability => $grants) {
+        if (!empty($plugin->customCapabilities)) {
+            foreach ($plugin->customCapabilities as $capability => $grants) {
                 // If this is a WP core capability (core_capability = true) don't
                 // remove
                 if (!empty($grants['core_capability'])) {
@@ -433,8 +450,8 @@ class Base
         }
 
         // Remove custom roles
-        if (!empty($this->customRoles)) {
-            foreach ($this->customRoles as $key => $value) {
+        if (!empty($plugin->customRoles)) {
+            foreach ($plugin->customRoles as $key => $value) {
                 remove_role($key);
             }
         }
