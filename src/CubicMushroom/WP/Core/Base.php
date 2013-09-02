@@ -271,7 +271,7 @@ class Base
      * 
      * @return void
      */
-    public function flushRewriteRules()
+    static public function flushRewriteRules()
     {
         flush_rewrite_rules();
     }
