@@ -196,6 +196,9 @@ class Base
         // Register activation & deactivation hooks
         $this->registerActivationDeactivationUninstallHooks();
 
+        // Flush the rewrite rules on activation
+        register_activation_hook($this->coreFile, array($this, 'flushRewriteRules'));
+
         // Check for main hood callbacks
         $this->setupAutomaticActionHooks();
 
@@ -259,6 +262,18 @@ class Base
                 );
             }
         }
+    }
+
+    /**
+     * Flushes rewrite rules
+     *
+     * Is called during activation
+     * 
+     * @return void
+     */
+    public function flushRewriteRules()
+    {
+        flush_rewrite_rules();
     }
 
     /**
