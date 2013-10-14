@@ -17,7 +17,7 @@ namespace CubicMushroom\WP\Core;
 
 /**
  * Base WordPress class for core functionality.  Is extended by the
- * CubicMushroom\WP'Plugins\Plugin and CubicMushroom\WP\Themes\Theme classes
+ * CubicMushroom\WP\Plugins\Plugin and CubicMushroom\WP\Themes\Theme classes
  * 
  * @category   WordPress_Plugins
  * @package    CubicMushroom_WP

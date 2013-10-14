@@ -80,7 +80,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
          * Labels for post type
          * @var array
          */
-        protected $labels;
+        static protected $labels;
 
         /**
          * Registers the custom post type
@@ -99,6 +99,9 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
         {
             $class = get_called_class();
             $args = wp_parse_args($class::$postArgs, self::$postArgs);
+            if (!empty($class::$labels)) {
+                $args['labels'] = $class::$labels;
+            }
             $postType = register_post_type($class::POST_SLUG, $args);
             if ($postType instanceof \WP_Error) {
                 throw new PostTypeRegistrationFailedException($class, $args, $postType);

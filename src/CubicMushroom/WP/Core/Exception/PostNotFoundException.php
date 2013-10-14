@@ -1,5 +1,3 @@
 <?php
 
-namespace CubicMushroom\WP\Core\Exception;
-
-class PostNotFoundException extends \Exception {}
+class CubicMushroom_WP_Core_Exception_PostNotFoundException extends Exception {}

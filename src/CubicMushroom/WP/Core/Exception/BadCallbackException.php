@@ -1,5 +1,3 @@
 <?php
 
-namespace CubicMushroom\WP\Core\Exception;
-
-class BadCallbackException extends \Exception {}
+class CubicMushroom_WP_Core_Exception_BadCallbackException extends Exception {}

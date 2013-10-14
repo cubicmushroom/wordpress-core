@@ -12,10 +12,6 @@
  * @link       http://cubicmushroom.co.uk
  **/
 
-namespace CubicMushroom\WP\Core\Exception;
-
-use CubicMushroom\WP\Core\PostType;
-
 /**
  * Exception thrown when custom post type registration fails
  *
@@ -28,7 +24,7 @@ use CubicMushroom\WP\Core\PostType;
  * @license    http://opensource.org/licenses/MIT MIT
  * @link       http://cubicmushroom.co.uk
  **/
-class PostTypeRegistrationFailedException extends \Exception
+class CubicMushroom_WP_Core_Exception_PostTypeRegistrationFailedException extends Exception
 {
     /**
      * The args used when attempting to create post type
@@ -49,7 +45,7 @@ class PostTypeRegistrationFailedException extends \Exception
      *
      * @return void
      */
-    public function __construct($postType, $args, \WP_Error $error)
+    public function __construct($postType, $args, WP_Error $error)
     {
         // Store args
         $this->args = $args;
