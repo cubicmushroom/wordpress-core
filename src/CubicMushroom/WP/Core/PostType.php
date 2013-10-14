@@ -245,8 +245,6 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
 
         /**
          * Returns the WP_User object of the author of the post
-         *
-         * @throws PostNotAvailableException If the application post is not available
          * 
          * @return WP_User|null
          */
@@ -255,7 +253,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
             try {
                 $author = get_userdata($this->getPost()->post_author);
             } catch (PostNotAvailableException $e) {
-                throw $e;
+                return null;
             }
 
             return $author;
@@ -307,7 +305,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
         protected function getPost()
         {
             if (!isset($this->WP_Post)) {
-                throw new PostNotAvailableException("WP_User not set");
+                throw new PostNotAvailableException("WP_Post not set");
             }
             return $this->WP_Post;
         }
