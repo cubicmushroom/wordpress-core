@@ -182,7 +182,7 @@ if (!class_exists('\CubicMushroom\WP\Core\PostType')) {
          * 
          * @return [type]        [description]
          */
-        public function createFromPost(\WP_Post $post)
+        static public function createFromPost(\WP_Post $post)
         {
             $class = get_called_class();
             $newPost = new $class();
